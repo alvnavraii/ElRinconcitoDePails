@@ -1,0 +1,20 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular con gradiente -->
+  <circle cx="16" cy="16" r="16" fill="url(#gradient)"/>
+  
+  <!-- Letra E estilizada -->
+  <path d="M12 8L20 8C21.1046 8 22 8.89543 22 10V10C22 11.1046 21.1046 12 20 12L14 12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M12 14L18 14C19.1046 14 20 14.8954 20 16V16C20 17.1046 19.1046 18 18 18L14 18" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M12 20L20 20C21.1046 20 22 20.8954 22 22V22C22 23.1046 21.1046 24 20 24L12 24" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Punto decorativo -->
+  <circle cx="12" cy="16" r="2" fill="white"/>
+  
+  <!-- Definición del gradiente -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4299E1"/>
+      <stop offset="100%" stop-color="#3182CE"/>
+    </linearGradient>
+  </defs>
+</svg>
