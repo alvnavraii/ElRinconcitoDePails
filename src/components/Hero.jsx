@@ -24,7 +24,7 @@ export const Hero = () => {
             {t('view_all')}
           </Button>
           <Button size={{ base: "sm", md: "md" }} variant="outline" width={{ base: "100%", sm: "auto" }}>
-            Ver Ofertas
+            {t('view_offers')}
           </Button>
         </Stack>
       </Stack>

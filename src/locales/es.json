@@ -64,6 +64,7 @@
   "hero_description": "Encuentra todo lo que necesitas en un solo lugar.",
   "featured_products": "Productos Destacados",
   "view_all": "Ver todos",
+  "view_offers": "Ver Ofertas",
   "add_to_cart": "Añadir al carrito",
   "price": "Precio",
   "description": "Descripción",
@@ -77,7 +78,7 @@
   "dark_mode": "Modo oscuro",
   "light_mode": "Modo claro",
   "continue_with": "O continúa con",
-  "email": "correo@ejemplo.com",
+  "email": "EMAIL",
   
   "admin_panel": "Panel de Administración",
   "navigation": "NAVEGACIÓN",
@@ -88,5 +89,82 @@
   "orders": "Pedidos",
   "sales": "Ventas",
   "shipping": "Envíos",
-  "languages": "Idiomas"
-} 
+  "language_names": {
+    "es": "Español",
+    "en": "Inglés",
+    "fr": "Francés"
+  },
+  "dashboard_translations": {
+    "title": "Panel de Control",
+    "users": "Gestión de Usuarios",
+    "stats": "Estadísticas",
+    "user_management": {
+      "title": "Gestión de Usuarios",
+      "create": "Crear Usuario",
+      "edit": "Editar Usuario",
+      "delete": "Eliminar Usuario",
+      "role": "Rol",
+      "admin": "Administrador",
+      "user": "Usuario"
+    },
+    "control_panel": {
+      "title": "Panel de Control",
+      "statistics": "Estadísticas",
+      "metrics": "Métricas",
+      "overview": "Vista General"
+    }
+  },
+  "sales_chart": "Gráfico de Ventas",
+  "sales_chart_description": "Resumen mensual de ventas, beneficios y costos",
+  "edit_user": "Editar Usuario",
+  "create_user": "Crear Usuario",
+  "first_name": "Nombre",
+  "last_name": "Apellido",
+  "first_name_placeholder": "Ingrese el nombre",
+  "last_name_placeholder": "Ingrese el apellido",
+  "user_active": "Usuario Activo",
+  "user_admin": "Administrador",
+  "updating": "Actualizando...",
+  "creating": "Creando...",
+  "users_management": "Gestión de Usuarios",
+  "add_user": "Agregar Usuario",
+  "avatar": "Avatar",
+  "dashboard_items": {
+    "users": "Usuarios",
+    "orders": "Pedidos",
+    "sales": "Ventas",
+    "shipping": "Envíos",
+    "profits": "Beneficios",
+    "costs": "Costos",
+    "best_selling": "Productos más vendidos",
+    "recent_orders": "Pedidos recientes"
+  },
+  "order": {
+    "id": "ID",
+    "customer": "Cliente",
+    "date": "Fecha",
+    "status": "Estado",
+    "total": "Total"
+  },
+  "order_status": {
+    "completed": "Completado",
+    "pending": "Pendiente",
+    "processing": "Procesando",
+    "shipped": "Enviado",
+    "cancelled": "Cancelado"
+  },
+  "sales_graph": {
+    "month_jan": "Ene",
+    "month_feb": "Feb",
+    "month_mar": "Mar",
+    "month_apr": "Abr",
+    "month_may": "May",
+    "month_jun": "Jun",
+    "month_jul": "Jul",
+    "profit": "Beneficio",
+    "costs": "Costos",
+    "month": "Mes",
+    "graph": "Gráfico de Ventas",
+    "graph_description": "Resumen de ventas y beneficios"
+  }
+}

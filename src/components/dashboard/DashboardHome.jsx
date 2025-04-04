@@ -34,6 +34,7 @@ import {
   FiTrendingDown
 } from 'react-icons/fi';
 import Chart3D from './Chart3D';
+import { useTranslation } from 'react-i18next';
 
 // Componente de tarjeta de estadísticas
 const StatCard = ({ title, stat, icon, percentage, isIncrease }) => {
@@ -69,6 +70,8 @@ const StatCard = ({ title, stat, icon, percentage, isIncrease }) => {
 
 // Componente de productos más vendidos
 const TopProducts = () => {
+  const { t } = useTranslation();
+  
   const products = [
     { name: 'Smartphone XYZ', sales: 120, stock: 45, percentage: 85 },
     { name: 'Laptop Pro', sales: 95, stock: 12, percentage: 65 },
@@ -80,7 +83,7 @@ const TopProducts = () => {
   return (
     <Card borderRadius="lg" boxShadow="md" height="100%">
       <CardHeader pb={0}>
-        <Heading size="md">Productos más vendidos</Heading>
+        <Heading size="md">{t('dashboard_items.best_selling')}</Heading>
       </CardHeader>
       <CardBody>
         <Stack spacing={4}>
@@ -106,21 +109,23 @@ const TopProducts = () => {
 
 // Componente de últimos pedidos
 const RecentOrders = () => {
+  const { t } = useTranslation();
+  
   const orders = [
-    { id: '#ORD-001', customer: 'Juan Pérez', date: '2023-04-01', status: 'Completado', total: '€129.99' },
-    { id: '#ORD-002', customer: 'María García', date: '2023-04-02', status: 'Pendiente', total: '€89.50' },
-    { id: '#ORD-003', customer: 'Carlos López', date: '2023-04-02', status: 'Procesando', total: '€199.99' },
-    { id: '#ORD-004', customer: 'Ana Martínez', date: '2023-04-03', status: 'Enviado', total: '€59.99' },
-    { id: '#ORD-005', customer: 'Pedro Sánchez', date: '2023-04-03', status: 'Cancelado', total: '€149.50' },
+    { id: '#ORD-001', customer: 'Juan Pérez', date: '2023-04-01', status: t('order_status.completed'), total: '€129.99' },
+    { id: '#ORD-002', customer: 'María García', date: '2023-04-02', status: t('order_status.pending'), total: '€89.50' },
+    { id: '#ORD-003', customer: 'Carlos López', date: '2023-04-02', status: t('order_status.processing'), total: '€199.99' },
+    { id: '#ORD-004', customer: 'Ana Martínez', date: '2023-04-03', status: t('order_status.shipped'), total: '€59.99' },
+    { id: '#ORD-005', customer: 'Pedro Sánchez', date: '2023-04-03', status: t('order_status.cancelled'), total: '€149.50' },
   ];
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Completado': return 'green';
-      case 'Pendiente': return 'yellow';
-      case 'Procesando': return 'blue';
-      case 'Enviado': return 'purple';
-      case 'Cancelado': return 'red';
+      case t('order_status.completed'): return 'green';
+      case t('order_status.pending'): return 'yellow';
+      case t('order_status.processing'): return 'blue';
+      case t('order_status.shipped'): return 'purple';
+      case t('order_status.cancelled'): return 'red';
       default: return 'gray';
     }
   };
@@ -131,7 +136,7 @@ const RecentOrders = () => {
   return (
     <Card borderRadius="lg" boxShadow="md" height="100%">
       <CardHeader pb={0}>
-        <Heading size="md">Pedidos recientes</Heading>
+        <Heading size="md">{t('dashboard_items.recent_orders')}</Heading>
       </CardHeader>
       <CardBody>
         {isMobile ? (
@@ -146,8 +151,8 @@ const RecentOrders = () => {
                       {order.status}
                     </Badge>
                   </Flex>
-                  <Text fontSize="sm">Cliente: {order.customer}</Text>
-                  <Text fontSize="sm">Fecha: {order.date}</Text>
+                  <Text fontSize="sm">{t('order.customer')}: {order.customer}</Text>
+                  <Text fontSize="sm">{t('order.date')}: {order.date}</Text>
                   <Flex justifyContent="flex-end" mt={2}>
                     <Text fontWeight="bold">{order.total}</Text>
                   </Flex>
@@ -161,11 +166,11 @@ const RecentOrders = () => {
             <Table variant="simple" size="sm">
               <Thead>
                 <Tr>
-                  <Th>ID</Th>
-                  <Th>Cliente</Th>
-                  <Th>Fecha</Th>
-                  <Th>Estado</Th>
-                  <Th isNumeric>Total</Th>
+                  <Th>{t('order.id')}</Th>
+                  <Th>{t('order.customer')}</Th>
+                  <Th>{t('order.date')}</Th>
+                  <Th>{t('order.status')}</Th>
+                  <Th isNumeric>{t('order.total')}</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -193,36 +198,36 @@ const RecentOrders = () => {
 
 // Componente principal del Dashboard
 export const DashboardHome = () => {
-  // Simular carga de datos
+  const { t } = useTranslation();
   
   return (
     <Box p={4}>
-      <Heading mb={6}>Panel de Control</Heading>
+      <Heading mb={6}>{t('dashboard_translations.title')}</Heading>
       
       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
         <StatCard 
-          title="Usuarios" 
+          title={t('dashboard_items.users')}
           stat="1,254" 
           icon={FiUsers} 
           percentage={12} 
           isIncrease={true} 
         />
         <StatCard 
-          title="Pedidos" 
+          title={t('dashboard_items.orders')}
           stat="452" 
           icon={FiShoppingBag} 
           percentage={8} 
           isIncrease={true} 
         />
         <StatCard 
-          title="Ventas" 
+          title={t('dashboard_items.sales')}
           stat="€24,530" 
           icon={FiDollarSign} 
           percentage={5} 
           isIncrease={false} 
         />
         <StatCard 
-          title="Envíos" 
+          title={t('dashboard_items.shipping')}
           stat="352" 
           icon={FiTruck} 
           percentage={10} 

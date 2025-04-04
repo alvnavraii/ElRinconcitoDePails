@@ -65,6 +65,7 @@
   "hero_description": "Trouvez tout ce dont vous avez besoin en un seul endroit.",
   "featured_products": "Produits Vedettes",
   "view_all": "Voir tout",
+  "view_offers": "Voir les offres",
   "add_to_cart": "Ajouter au panier",
   "price": "Prix",
   "description": "Description",
@@ -77,7 +78,7 @@
   "settings": "Paramètres",
   "dark_mode": "Mode sombre",
   "light_mode": "Mode clair",
-  "email": "email@exemple.com",
+  "email": "EMAIL",
   
   "admin_panel": "Panneau d'Administration",
   "navigation": "NAVIGATION",
@@ -88,5 +89,85 @@
   "orders": "Commandes",
   "sales": "Ventes",
   "shipping": "Expédition",
-  "languages": "Langues"
+  "languages": "Langues",
+  "language_names": {
+    "es": "Espagnol",
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "dashboard_translations": {
+    "title": "Tableau de Bord",
+    "users": "Gestion des Utilisateurs",
+    "stats": "Statistiques",
+    "user_management": {
+      "title": "Gestion des Utilisateurs",
+      "create": "Créer un Utilisateur",
+      "edit": "Modifier l'Utilisateur",
+      "delete": "Supprimer l'Utilisateur",
+      "role": "Rôle",
+      "admin": "Administrateur",
+      "user": "Utilisateur"
+    },
+    "control_panel": {
+      "title": "Panneau de Contrôle",
+      "statistics": "Statistiques",
+      "metrics": "Métriques",
+      "overview": "Vue d'Ensemble"
+    }
+  },
+  "sales_chart": "Graphique des Ventes",
+  "sales_chart_description": "Aperçu des ventes et des bénéfices",
+  "edit_user": "Modifier l'Utilisateur",
+  "create_user": "Créer un Utilisateur",
+  "first_name": "Prénom",
+  "last_name": "Nom",
+  "first_name_placeholder": "Entrez le prénom",
+  "last_name_placeholder": "Entrez le nom",
+  "user_active": "Utilisateur Actif",
+  "user_admin": "Administrateur",
+  "updating": "Mise à jour...",
+  "creating": "Création...",
+  "users_management": "Gestion des Utilisateurs",
+  "add_user": "Ajouter un Utilisateur",
+  "avatar": "Avatar",
+  "role": "Rôle",
+  "retry": "Réessayer",
+  "dashboard_items": {
+    "users": "Utilisateurs",
+    "orders": "Commandes",
+    "sales": "Ventes",
+    "shipping": "Expédition",
+    "profits": "Bénéfices",
+    "costs": "Coûts",
+    "best_selling": "Produits les plus vendus",
+    "recent_orders": "Commandes récentes"
+  },
+  "order": {
+    "id": "ID",
+    "customer": "Client",
+    "date": "Date",
+    "status": "Statut",
+    "total": "Total"
+  },
+  "order_status": {
+    "completed": "Terminé",
+    "pending": "En attente",
+    "processing": "En cours",
+    "shipped": "Expédié",
+    "cancelled": "Annulé"
+  },
+  "sales_graph": {
+    "month_jan": "Jan",
+    "month_feb": "Fév",
+    "month_mar": "Mar",
+    "month_apr": "Avr",
+    "month_may": "Mai",
+    "month_jun": "Juin",
+    "month_jul": "Juil",
+    "profit": "Bénéfice",
+    "costs": "Coûts",
+    "month": "Mois",
+    "graph": "Graphique des Ventes",
+    "graph_description": "Aperçu des ventes et des bénéfices"
+  }
 } 

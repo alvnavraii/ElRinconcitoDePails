@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Heading, SimpleGrid, Icon, Text, Stack, Flex, useColorModeValue } from '@chakra-ui/react';
-import { FiUsers, FiShoppingBag, FiTag, FiGlobe } from 'react-icons/fi';
+import { FiUsers, FiShoppingBag, FiTag, FiGlobe, FiDollarSign, FiTruck, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
 import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
@@ -10,31 +10,45 @@ export const Dashboard = () => {
   const stats = [
     {
       id: 1,
-      title: t('manage_users'),
+      title: t('dashboard_items.users'),
+      value: '1,234',
       icon: FiUsers,
-      color: 'blue.500',
-      link: '/dashboard/users'
+      color: 'blue.500'
     },
     {
       id: 2,
-      title: t('manage_products'),
+      title: t('dashboard_items.orders'),
+      value: '567',
       icon: FiShoppingBag,
-      color: 'green.500',
-      link: '/dashboard/products'
+      color: 'green.500'
     },
     {
       id: 3,
-      title: t('manage_categories'),
-      icon: FiTag,
-      color: 'purple.500',
-      link: '/dashboard/categories'
+      title: t('dashboard_items.sales'),
+      value: '$89,123',
+      icon: FiDollarSign,
+      color: 'purple.500'
     },
     {
       id: 4,
-      title: t('manage_languages'),
-      icon: FiGlobe,
-      color: 'orange.500',
-      link: '/dashboard/languages'
+      title: t('dashboard_items.shipping'),
+      value: '123',
+      icon: FiTruck,
+      color: 'orange.500'
+    },
+    {
+      id: 5,
+      title: t('dashboard_items.profits'),
+      value: '$12,345',
+      icon: FiTrendingUp,
+      color: 'teal.500'
+    },
+    {
+      id: 6,
+      title: t('dashboard_items.costs'),
+      value: '$6,789',
+      icon: FiTrendingDown,
+      color: 'red.500'
     }
   ];
 

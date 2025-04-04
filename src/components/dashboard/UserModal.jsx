@@ -15,6 +15,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const UserModal = ({ isOpen, onClose, user, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -29,6 +30,7 @@ export const UserModal = ({ isOpen, onClose, user, onSuccess }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user) {
@@ -128,28 +130,28 @@ export const UserModal = ({ isOpen, onClose, user, onSuccess }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{user ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</ModalHeader>
+        <ModalHeader>{user ? t('edit_user') : t('create_user')}</ModalHeader>
         <ModalCloseButton />
         <form onSubmit={handleSubmit}>
           <ModalBody>
             <SimpleGrid columns={2} spacing={4}>
               <FormControl id="firstName" isRequired>
-                <FormLabel>Nombre</FormLabel>
+                <FormLabel>{t('first_name')}</FormLabel>
                 <Input 
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Nombre"
+                  placeholder={t('first_name_placeholder')}
                 />
               </FormControl>
               
               <FormControl id="lastName" isRequired>
-                <FormLabel>Apellido</FormLabel>
+                <FormLabel>{t('last_name')}</FormLabel>
                 <Input 
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Apellido"
+                  placeholder={t('last_name_placeholder')}
                 />
               </FormControl>
             </SimpleGrid>
@@ -203,7 +205,7 @@ export const UserModal = ({ isOpen, onClose, user, onSuccess }) => {
                   isChecked={formData.active}
                   onChange={handleChange}
                 >
-                  Usuario Activo
+                  {t('user_active')}
                 </Checkbox>
               </FormControl>
               
@@ -213,22 +215,22 @@ export const UserModal = ({ isOpen, onClose, user, onSuccess }) => {
                   isChecked={formData.admin}
                   onChange={handleChange}
                 >
-                  Administrador
+                  {t('user_admin')}
                 </Checkbox>
               </FormControl>
             </SimpleGrid>
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancelar
+              {t('cancel')}
             </Button>
             <Button 
               colorScheme="blue" 
               type="submit"
               isLoading={isLoading}
-              loadingText={user ? "Actualizando..." : "Creando..."}
+              loadingText={user ? t('updating') : t('creating')}
             >
-              {user ? 'Actualizar' : 'Crear'}
+              {user ? t('update') : t('create')}
             </Button>
           </ModalFooter>
         </form>

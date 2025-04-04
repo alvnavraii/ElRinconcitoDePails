@@ -65,6 +65,7 @@
   "hero_description": "Find everything you need in one place.",
   "featured_products": "Featured Products",
   "view_all": "View All",
+  "view_offers": "View Offers",
   "add_to_cart": "Add to cart",
   "price": "Price",
   "description": "Description",
@@ -77,7 +78,7 @@
   "settings": "Settings",
   "dark_mode": "Dark mode",
   "light_mode": "Light mode",
-  "email": "email@example.com",
+  "email": "EMAIL",
   
   "admin_panel": "Admin Panel",
   "navigation": "NAVIGATION",
@@ -88,5 +89,85 @@
   "orders": "Orders",
   "sales": "Sales",
   "shipping": "Shipping",
-  "languages": "Languages"
+  "languages": "Languages",
+  "language_names": {
+    "es": "Spanish",
+    "en": "English",
+    "fr": "French"
+  },
+  "dashboard_translations": {
+    "title": "Dashboard",
+    "users": "User Management",
+    "stats": "Statistics",
+    "user_management": {
+      "title": "User Management",
+      "create": "Create User",
+      "edit": "Edit User",
+      "delete": "Delete User",
+      "role": "Role",
+      "admin": "Administrator",
+      "user": "User"
+    },
+    "control_panel": {
+      "title": "Control Panel",
+      "statistics": "Statistics",
+      "metrics": "Metrics",
+      "overview": "Overview"
+    }
+  },
+  "sales_chart": "Sales Chart",
+  "sales_chart_description": "Sales and profits overview",
+  "edit_user": "Edit User",
+  "create_user": "Create User",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "first_name_placeholder": "Enter first name",
+  "last_name_placeholder": "Enter last name",
+  "user_active": "Active User",
+  "user_admin": "Administrator",
+  "updating": "Updating...",
+  "creating": "Creating...",
+  "users_management": "Users Management",
+  "add_user": "Add User",
+  "avatar": "Avatar",
+  "role": "Role",
+  "retry": "Retry",
+  "dashboard_items": {
+    "users": "Users",
+    "orders": "Orders",
+    "sales": "Sales",
+    "shipping": "Shipping",
+    "profits": "Profits",
+    "costs": "Costs",
+    "best_selling": "Best Selling Products",
+    "recent_orders": "Recent Orders"
+  },
+  "order": {
+    "id": "ID",
+    "customer": "Customer",
+    "date": "Date",
+    "status": "Status",
+    "total": "Total"
+  },
+  "order_status": {
+    "completed": "Completed",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "cancelled": "Cancelled"
+  },
+  "sales_graph": {
+    "month_jan": "Jan",
+    "month_feb": "Feb",
+    "month_mar": "Mar",
+    "month_apr": "Apr",
+    "month_may": "May",
+    "month_jun": "Jun",
+    "month_jul": "Jul",
+    "profit": "Profit",
+    "costs": "Costs",
+    "month": "Month",
+    "graph": "Sales Graph",
+    "graph_description": "Sales and profits overview"
+  }
 } 

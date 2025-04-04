@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {
   Box,
   Flex,
@@ -57,6 +57,60 @@ export const Navbar = () => {
     navigate('/dashboard');
   };
 
+  // Agregamos más logs para depuración
+  console.log('Usuario completo:', user);
+  console.log('User Role:', user?.role);
+
+  // Función para verificar si el token ha expirado
+  const checkTokenExpiration = useCallback(() => {
+    const token = localStorage.getItem('token'); // o donde almacenes el token
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = payload.exp * 1000; // Convertir a milisegundos
+        
+        if (Date.now() >= expirationTime) {
+          console.log('Token expirado, cerrando sesión...');
+          logout();
+          onLoginOpen();
+          return false;
+        }
+      } catch (error) {
+        console.error('Error al verificar el token:', error);
+        logout();
+        onLoginOpen();
+        return false;
+      }
+    }
+    return true;
+  }, [logout, onLoginOpen]);
+
+  // Verificar el token cada minuto y en el montaje inicial
+  useEffect(() => {
+    checkTokenExpiration();
+
+    const intervalId = setInterval(() => {
+      checkTokenExpiration();
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [checkTokenExpiration]);
+
+  // También verificar cuando se detecte un error 401
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      logout();
+      onLoginOpen();
+    };
+
+    window.addEventListener('unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('unauthorized', handleUnauthorized);
+  }, [logout, onLoginOpen]);
+
+  // En cualquier lugar donde se haga una petición a la API, 
+  // cuando se reciba un 401, disparar el evento:
+  // window.dispatchEvent(new CustomEvent('unauthorized', { detail: { status: 401 } }));
+
   return (
     <Box bg={bgColor} px={4} borderBottom={1} borderStyle={'solid'} borderColor={borderColor} position="sticky" top={0} zIndex={10}>
       <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
@@ -83,7 +137,7 @@ export const Navbar = () => {
             <RouterLink to="/">{t('home')}</RouterLink>
             <RouterLink to="/products">{t('products')}</RouterLink>
             <RouterLink to="/categories">{t('categories')}</RouterLink>
-            {user && user.role === 'ADMIN' && (
+            {user?.admin === true && (
               <RouterLink to="/dashboard">{t('dashboard')}</RouterLink>
             )}
           </HStack>
@@ -159,24 +213,26 @@ export const Navbar = () => {
                   {t('login')}
                 </Button>
               )}
+              {user?.admin === true && (
+                <Button
+                  w="full"
+                  colorScheme="blue"
+                  variant="outline"
+                  mb={2}
+                  onClick={() => {
+                    onMenuClose();
+                    handleDashboard();
+                  }}
+                >
+                  {t('dashboard')}
+                </Button>
+              )}
               {user && (
                 <>
                   <Box borderTopWidth="1px" w="full" pt={4} mt={2}>
                     <Text fontWeight="bold" mb={2}>
                       {userFullName}
                     </Text>
-                    <Button
-                      w="full"
-                      colorScheme="blue"
-                      variant="outline"
-                      mb={2}
-                      onClick={() => {
-                        onMenuClose();
-                        handleDashboard();
-                      }}
-                    >
-                      {t('dashboard')}
-                    </Button>
                     <Button
                       w="full"
                       colorScheme="red"

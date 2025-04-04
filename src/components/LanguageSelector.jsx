@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Menu, 
   MenuButton, 
@@ -17,7 +17,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
 
 const LanguageSelector = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [languages, setLanguages] = useState([]);
   const [currentLanguage, setCurrentLanguage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,6 +143,10 @@ const LanguageSelector = () => {
     localStorage.setItem('i18nextLng', language.code.toLowerCase());
   };
 
+  const getTranslatedName = useCallback((code) => {
+    return t(`language_names.${code}`);
+  }, [t]);
+
   if (isLoading) {
     return (
       <Button variant="ghost" isDisabled>
@@ -171,7 +175,7 @@ const LanguageSelector = () => {
                   fallback={<Box w="20px" h="15px" bg="gray.200" mr={2} />}
                 />
               )}
-              <Text>{currentLanguage.name}</Text>
+              <Text>{getTranslatedName(currentLanguage.code.toLowerCase())}</Text>
             </>
           )}
         </Flex>
@@ -201,7 +205,7 @@ const LanguageSelector = () => {
                     fallback={<Box w="20px" h="15px" bg="gray.200" mr={2} />}
                   />
                 )}
-                <Text>{language.name}</Text>
+                <Text>{getTranslatedName(language.code.toLowerCase())}</Text>
                 {language.nativeName && language.nativeName !== language.name && (
                   <Text 
                     ml={2} 

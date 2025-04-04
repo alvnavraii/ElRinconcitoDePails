@@ -22,6 +22,7 @@ import {
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { UserModal } from './UserModal';
+import { useTranslation } from 'react-i18next';
 
 export const UsersTable = () => {
   const [users, setUsers] = useState([]);
@@ -30,6 +31,7 @@ export const UsersTable = () => {
   const [error, setError] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -125,35 +127,30 @@ export const UsersTable = () => {
   if (error) {
     return (
       <Center h="50vh" flexDirection="column">
-        <Text color="red.500" mb={4}>Error: {error}</Text>
-        <Button onClick={fetchUsers}>Reintentar</Button>
+        <Text color="red.500" mb={4}>{t('error')}: {error}</Text>
+        <Button onClick={fetchUsers}>{t('retry')}</Button>
       </Center>
     );
   }
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="lg">Usuarios</Heading>
-        <Button
-          leftIcon={<AddIcon />}
-          colorScheme="blue"
-          onClick={handleAdd}
-        >
-          Añadir Usuario
+      <Flex justify="space-between" align="center" mb={4}>
+        <Heading size="lg">{t('users_management')}</Heading>
+        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={handleAdd}>
+          {t('add_user')}
         </Button>
       </Flex>
 
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>Avatar</Th>
-            <Th>Nombre</Th>
-            <Th>Email</Th>
-            <Th>Teléfono</Th>
-            <Th>Estado</Th>
-            <Th>Rol</Th>
-            <Th>Acciones</Th>
+            <Th>{t('avatar')}</Th>
+            <Th>{t('name')}</Th>
+            <Th>{t('email')}</Th>
+            <Th>{t('role')}</Th>
+            <Th>{t('status')}</Th>
+            <Th>{t('actions')}</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -168,15 +165,14 @@ export const UsersTable = () => {
               </Td>
               <Td>{`${user.firstName} ${user.lastName}`}</Td>
               <Td>{user.email}</Td>
-              <Td>{user.phone || '-'}</Td>
-              <Td>
-                <Badge colorScheme={user.active ? 'green' : 'red'}>
-                  {user.active ? 'Activo' : 'Inactivo'}
-                </Badge>
-              </Td>
               <Td>
                 <Badge colorScheme={user.admin ? 'purple' : 'gray'}>
                   {user.admin ? 'Admin' : 'Usuario'}
+                </Badge>
+              </Td>
+              <Td>
+                <Badge colorScheme={user.active ? 'green' : 'red'}>
+                  {user.active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </Td>
               <Td>
