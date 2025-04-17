@@ -1,315 +1,317 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Box, Button, FormControl, FormLabel, Input, Textarea, Switch,
-  VStack, HStack, useToast, Card, CardBody, Text, useColorModeValue, Flex, useDisclosure
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  useToast,
+  VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormErrorMessage,
+  Spinner,
+  IconButton,
+  useColorModeValue,
+  Flex,
+  Text,
+  Switch,
 } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
+import { MdLaunch, MdSave, MdCancel } from "react-icons/md";
+import { FaUnlink } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCategories } from '../../../hooks/useCategories';
 import Tree from '../../common/Tree';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import EditCategoryModal from './EditCategoryModal';
+import { useTranslation } from 'react-i18next';
+
+// Función simple para generar slugs (puedes mejorarla si necesitas)
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+    .replace(/[^\w-]+/g, '') // Eliminar caracteres no alfanuméricos excepto guiones
+    .replace(/--+/g, '-'); // Reemplazar múltiples guiones con uno solo
+};
+
+// Función auxiliar recursiva para buscar una categoría por ID en el árbol
+const findCategoryByIdRecursive = (categories, id) => {
+  if (!id) return null;
+  for (const category of categories) {
+    if (category.id === id) {
+      return category;
+    }
+    if (category.children) {
+      const found = findCategoryByIdRecursive(category.children, id);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+};
 
 export const CategoryForm = () => {
-  const { categories, fetchCategories, loading } = useCategories();
+  const { id } = useParams();
+  const { categories: allCategories, fetchCategories, loading: loadingCategories } = useCategories();
+  const { register, handleSubmit, setValue, reset, watch, formState: { errors, isSubmitting } } = useForm({
+    defaultValues: {
+      active: true,
+      name: '',
+      description: '',
+      slug: '',
+    }
+  });
   const [selectedParentId, setSelectedParentId] = useState(null);
-  const initialFormData = {
-    name: '',
-    slug: '',
-    description: '',
-    isActive: true,
-    parentId: null
-  };
-  const [formData, setFormData] = useState(initialFormData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [expandedNodes, setExpandedNodes] = useState([]);
-  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
-  const [categoryToDelete, setCategoryToDelete] = useState(null);
-  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
-  const [categoryToEdit, setCategoryToEdit] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [expandedIds, setExpandedIds] = useState(new Set());
   
-  const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
-  const bgCard = useColorModeValue('white', 'gray.700');
-  
-  const handleSelectParent = (categoryId) => {
-    console.log(`CategoryForm handleSelectParent: Setting selectedParentId to ${categoryId}`);
-    setSelectedParentId(categoryId);
-    setFormData(prev => ({
-      ...prev,
-      parentId: categoryId
-    }));
-  };
-  
-  const handleToggleNode = (nodeId) => {
-    setExpandedNodes(prevExpandedNodes => {
-      if (prevExpandedNodes.includes(nodeId)) {
-        return prevExpandedNodes.filter(id => id !== nodeId);
+  // Observar el campo 'name'
+  const categoryName = watch('name');
+
+  // useEffect para generar y actualizar el slug cuando 'name' cambie
+  useEffect(() => {
+    const generated = generateSlug(categoryName);
+    setValue('slug', generated, { shouldValidate: true });
+  }, [categoryName, setValue]);
+
+  useEffect(() => {
+    if (id) {
+      const category = findCategoryByIdRecursive(allCategories, parseInt(id, 10));
+      if (category) {
+        setValue('name', category.name);
+        setValue('description', category.description || '');
+        setSelectedParentId(category.parentId);
       } else {
-        return [...prevExpandedNodes, nodeId];
+        reset({ active: true, name: '', description: '', slug: '' });
+        setSelectedParentId(null);
       }
-    });
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    setIsSubmitting(true);
-    console.log("CategoryForm: Iniciando handleSubmit...");
-    
+    } else {
+      reset({ active: true, name: '', description: '', slug: '' });
+      setSelectedParentId(null);
+    }
+  }, [id, allCategories, reset, setValue]);
+
+  const onSubmit = async (data) => {
+    const categoryData = {
+      ...data,
+      parentId: selectedParentId,
+    };
+
+    const apiUrl = id
+      ? `http://localhost:8080/api/v1/categories/${id}`
+      : 'http://localhost:8080/api/v1/categories';
+    const method = id ? 'PUT' : 'POST';
+
     try {
-      const categoryData = {
-        name: formData.name,
-        slug: formData.slug,
-        description: formData.description,
-        isActive: formData.isActive,
-        parentId: selectedParentId
-      };
-      console.log("CategoryForm: Enviando datos:", categoryData);
-      
-      const response = await fetch('http://localhost:8080/api/v1/categories', {
-        method: 'POST',
+      const token = localStorage.getItem('token');
+      const response = await fetch(apiUrl, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(categoryData)
+        body: JSON.stringify(categoryData),
       });
-      
-      console.log("CategoryForm: Respuesta del POST recibida:", response.status);
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Error desconocido al crear la categoría' }));
+        const errorData = await response.json();
         throw new Error(errorData.message || `Error ${response.status}`);
       }
-      
-      console.log("CategoryForm: Categoría creada exitosamente. Llamando a fetchCategories...");
-      await fetchCategories();
-      console.log("CategoryForm: fetchCategories completado.");
-      
+
       toast({
-        title: t('success'),
-        description: t('category_created'),
+        title: `Categoría ${id ? 'actualizada' : 'creada'}.`,
         status: 'success',
         duration: 3000,
-        isClosable: true
+        isClosable: true,
       });
-      
-      console.log("CategoryForm: Reseteando formulario...");
-      setFormData(initialFormData);
-      setSelectedParentId(null);
-      console.log("CategoryForm: Formulario reseteado.");
+      fetchCategories();
+      navigate('/dashboard/categories');
 
     } catch (error) {
-      console.error("CategoryForm: Error en handleSubmit:", error);
       toast({
-        title: t('error'),
+        title: 'Error al guardar',
         description: error.message,
         status: 'error',
         duration: 5000,
-        isClosable: true
+        isClosable: true,
       });
-    } finally {
-      setIsSubmitting(false);
-      console.log("CategoryForm: handleSubmit finalizado.");
     }
   };
-  
-  const handleEdit = (categoryId) => {
-    console.log(`CategoryForm handleEdit: Received ID=${categoryId}. Finding category...`);
-    const category = findCategoryById(categories, categoryId);
 
-    if (!category) {
-      console.error("No se encontró la categoría a editar:", categoryId);
-      toast({ title: t('error'), description: t('category_not_found'), status: 'error' });
-      return;
-    }
-    console.log(`CategoryForm handleEdit: Found category, opening modal for`, category);
-    setCategoryToEdit(category);
-    onEditModalOpen();
+  const handleSelectParent = (parentId) => {
+    console.log('handleSelectParent called with ID:', parentId, 'Current selectedParentId:', selectedParentId);
+    setSelectedParentId(parentId);
+    console.log('State updated. New selectedParentId should be:', parentId);
   };
-  
-  const handleDeleteRequest = (categoryId) => {
-    console.log("Solicitud para eliminar categoría con ID:", categoryId);
 
-    const category = findCategoryById(categories, categoryId);
+  const handleSelectParentInModal = (parentId) => {
+    console.log('handleSelectParentInModal called with ID:', parentId, 'Current selectedParentId:', selectedParentId);
+    handleSelectParent(parentId);
+    onClose();
+  };
 
-    if (!category) {
-      console.error("No se encontró la categoría a eliminar:", categoryId);
-      toast({ title: t('error'), description: t('category_not_found'), status: 'error' });
-      return;
-    }
+  const handleDeselectParent = () => {
+    console.log("Botón deseleccionar padre clickeado");
+    setSelectedParentId(null);
+  };
 
-    const hasChildren = !!(category.children && category.children.length > 0);
-    const itemName = category.name || t('this_category');
-    const message = hasChildren
-      ? t('delete_confirmation_message_with_children', { item: itemName })
-      : t('delete_confirmation_message', { item: itemName });
-    const confirmButtonText = t('delete');
-    const cancelButtonText = t('cancel');
-    const title = t('delete_confirmation_title');
-
-    Swal.fire({
-      title: title,
-      text: message,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: confirmButtonText,
-      cancelButtonText: cancelButtonText
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log(`SweetAlert confirmado para eliminar ID=${categoryId}`);
-        handleConfirmDelete(categoryId);
+  const handleToggleNode = useCallback((nodeId) => {
+    setExpandedIds(prevExpandedIds => {
+      const newExpandedIds = new Set(prevExpandedIds);
+      if (newExpandedIds.has(nodeId)) {
+        newExpandedIds.delete(nodeId);
       } else {
-        console.log(`SweetAlert cancelado para eliminar ID=${categoryId}`);
+        newExpandedIds.add(nodeId);
       }
+      return newExpandedIds;
     });
+  }, []);
+
+  // Manejador para desvincular la categoría padre seleccionada
+  const handleUnlinkParent = (e) => {
+    e.stopPropagation(); // Evita que el clic se propague
+    handleSelectParent(null); // Llama al manejador de selección con null
   };
-  
-  const handleConfirmDelete = async (categoryId) => {
-    console.log("Confirmado eliminar categoría con ID:", categoryId);
 
-    try {
-      const response = await fetch(`http://localhost:8080/api/v1/categories/${categoryId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || `Error ${response.status} al eliminar la categoría`);
-      }
-
-      console.log("Categoría eliminada exitosamente. Recargando...");
-      await fetchCategories();
-
-      toast({
-        title: t('success'),
-        description: t('category_deleted'),
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-
-      if (selectedParentId === categoryId) {
-          setSelectedParentId(null);
-      }
-
-    } catch (error) {
-      console.error("Error al eliminar categoría:", error);
-      toast({
-        title: t('error'),
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+  // --- Función para resetear el estado del formulario ---
+  const resetForm = () => {
+    setSelectedParentId(null);
+    reset({ active: true, name: '', description: '', slug: '' });
   };
-  
-  useEffect(() => {
-    console.log("CategoryForm: Las categorías del contexto han cambiado:", categories);
-  }, [categories]);
-  
+
+  // --- NUEVA FUNCIÓN handleCancel ---
+  const handleCancel = () => {
+    resetForm(); // Llama a la función que limpia los estados
+    navigate('/dashboard/categories'); // Navega de vuelta a la lista
+  };
+
+  if (loadingCategories) {
+    return <Spinner />;
+  }
+
+  const inputBg = useColorModeValue('gray.100', 'gray.700');
+  const treeBorderColor = useColorModeValue('gray.200', 'gray.600');
+
+  console.log('Renderizando CategoryForm. selectedParentId actual:', selectedParentId);
+
+  // --- Log para depurar ---
+  console.log('Render - isOpen:', isOpen);
+
   return (
     <>
-      <Card bg={bgCard}>
-        <CardBody>
-          <Flex direction={{ base: 'column', md: 'row' }} align="start" justify="space-between">
-            <Box flex="1" mr={{ md: 4 }}>
-              <form onSubmit={handleSubmit}>
-                <VStack spacing={4} align="stretch">
-                  <FormControl isRequired>
-                    <FormLabel>{t('name')}</FormLabel>
-                    <Input
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>{t('slug')}</FormLabel>
-                    <Input
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel>{t('description')}</FormLabel>
-                    <Textarea
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                  </FormControl>
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel mb="0">{t('active')}</FormLabel>
-                    <Switch
-                      isChecked={formData.isActive}
-                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    />
-                  </FormControl>
-                  <Button type="submit" isLoading={isSubmitting} colorScheme="blue" alignSelf="flex-start">
-                    {t('create')}
-                  </Button>
-                </VStack>
-              </form>
-            </Box>
-            <Box flex="1" maxH="400px" overflowY="auto" border="1px solid" borderColor={useColorModeValue('gray.200', 'gray.600')} p={4} borderRadius="md" ml={{ md: 4 }} mt={{ base: 4, md: 0 }}>
-              <Text fontWeight="bold" mb={2}>{t('select_parent_category')}</Text>
-              {loading ? (
-                <Text>{t('loading_categories')}</Text>
-              ) : categories.length === 0 ? (
-                <Text>{t('no_categories_available')}</Text>
-              ) : (
+      <Box as="form" onSubmit={handleSubmit(onSubmit)} p={5} borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="white">
+        <Flex direction={{ base: 'column', md: 'row' }} gap={6}>
+          <VStack flex="1" spacing={4} align="stretch">
+            <FormControl isInvalid={errors.name}>
+              <FormLabel htmlFor="name">Nombre</FormLabel>
+              <Input id="name" {...register('name', { required: 'El nombre es obligatorio' })} />
+              <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.slug}>
+              <FormLabel htmlFor="slug">Slug (Generado)</FormLabel>
+              <Input
+                id="slug"
+                {...register('slug')}
+                isReadOnly
+                bg={inputBg}
+              />
+              <FormErrorMessage>{errors.slug?.message}</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.description}>
+              <FormLabel htmlFor="description">Descripción (Opcional)</FormLabel>
+              <Input id="description" {...register('description')} />
+            </FormControl>
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="active" mb="0">
+                Activo
+              </FormLabel>
+              <Switch id="active" {...register('active')} />
+            </FormControl>
+          </VStack>
+          <Box flex="1">
+            <FormControl id="parentCategory">
+              <FormLabel htmlFor="parentCategory">
+                <Flex align="center" justify="space-between">
+                  <Text mr={2}>Categoría Padre</Text>
+                  <IconButton
+                    aria-label="Seleccionar categoría padre en modal"
+                    icon={<MdLaunch />}
+                    size="sm"
+                    variant="ghost"
+                    onClick={onOpen}
+                  />
+                </Flex>
+              </FormLabel>
+              <Box border="1px" borderColor="gray.200" borderRadius="md" p={2} minH="200px" overflowY="auto">
                 <Tree
                   selectedId={selectedParentId}
                   onSelect={handleSelectParent}
-                  expandedNodes={expandedNodes}
-                  toggleNode={handleToggleNode}
-                  onEdit={handleEdit}
-                  onDelete={handleDeleteRequest}
+                  expandedIds={expandedIds}
+                  onToggleNode={handleToggleNode}
                 />
-              )}
-            </Box>
-          </Flex>
-        </CardBody>
-      </Card>
-
-      {categoryToEdit && (
-        <EditCategoryModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            onEditModalClose();
-            setCategoryToEdit(null);
-          }}
-          category={categoryToEdit}
-          onSuccess={() => {
-            console.log("EditCategoryModal onSuccess: Calling fetchCategories");
-            fetchCategories();
-            onEditModalClose();
-            setCategoryToEdit(null);
-          }}
-          categories={categories}
-        />
-      )}
+              </Box>
+            </FormControl>
+          </Box>
+        </Flex>
+        <Flex justify="flex-end" mt={6} gap={3}>
+          <Button onClick={handleCancel} variant="outline" leftIcon={<MdCancel />}>
+            Cancelar
+          </Button>
+          <Button type="submit" colorScheme="blue" isLoading={isSubmitting} leftIcon={<MdSave />}>
+            {id ? 'Actualizar Categoría' : 'Crear Categoría'}
+          </Button>
+        </Flex>
+      </Box>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="xl"
+        scrollBehavior="inside"
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Seleccionar Categoría Padre</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Tree
+              selectedId={selectedParentId}
+              onSelect={handleSelectParentInModal}
+              expandedIds={expandedIds}
+              onToggleNode={handleToggleNode}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              leftIcon={<FaUnlink />}
+              variant="ghost"
+              onClick={handleUnlinkParent}
+              isDisabled={!selectedParentId}
+              mr={3}
+            >
+              Deseleccionar
+            </Button>
+            <Button colorScheme='blue' onClick={onClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
-};
-
-const findCategoryById = (nodes, id) => {
-    for (const node of nodes) {
-        if (node.id === id) return node;
-        if (node.children) {
-            const found = findCategoryById(node.children, id);
-            if (found) return found;
-        }
-    }
-    return null;
 };
 
 export default CategoryForm;

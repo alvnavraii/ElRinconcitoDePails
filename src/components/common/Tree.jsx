@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Button,
   Icon,
-  IconButton,
   Flex,
   Spacer,
   useColorModeValue,
+  Text,
+  Spinner,
+  IconButton,
 } from '@chakra-ui/react';
 import { FiChevronRight, FiChevronDown, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useCategories } from '../../hooks/useCategories';
+import TreeNode from './TreeNode'; // Asegúrate que la ruta es correcta
 
 const TreeItem = ({ item, level = 0, onSelect, selectedId, expandedNodes, toggleNode, onEdit, onDelete }) => {
   const bgHover = useColorModeValue('gray.100', 'gray.600');
@@ -66,17 +70,17 @@ const TreeItem = ({ item, level = 0, onSelect, selectedId, expandedNodes, toggle
         }}
       >
         {item.children && item.children.length > 0 ? (
-          <Icon
-            as={isExpanded ? FiChevronDown : FiChevronRight}
+          <IconButton
+            aria-label={isExpanded ? 'Colapsar' : 'Expandir'}
+            icon={isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+            size="xs"
+            variant="ghost"
+            mr={2}
             onClick={(e) => {
               console.log(`Expand/Collapse Icon onClick: Fired for ID=${item.id}`);
               e.stopPropagation();
               toggleNode(item.id);
             }}
-            mr={2}
-            boxSize={4}
-            color={iconColor}
-            _hover={{ color: useColorModeValue('gray.800', 'white') }}
           />
         ) : (
           <Box w={4} mr={2} />
@@ -135,32 +139,41 @@ const TreeItem = ({ item, level = 0, onSelect, selectedId, expandedNodes, toggle
   );
 };
 
-const Tree = ({ onSelect, selectedId, expandedNodes, toggleNode = () => {}, onEdit = () => {}, onDelete = () => {} }) => {
-  const { categories } = useCategories();
+const Tree = ({
+  categories,
+  loading,
+  error,
+  onSelect,
+  selectedId,
+  expandedIds,
+  onToggleNode,
+  onEdit,
+  onDelete
+}) => {
+  const { categories: categoriesFromHook } = useCategories();
   
-  console.log('Tree - categories:', categories);
+  console.log('Tree - categories:', categoriesFromHook);
 
-  if (!categories || categories.length === 0) {
-    return <Box>No hay datos disponibles para mostrar.</Box>;
-  }
+  if (loading) return <Spinner size="md" />;
+  if (error) return <Text color="red.500">Error al cargar: {error.message || 'Error desconocido'}</Text>;
+  if (!categoriesFromHook || categoriesFromHook.length === 0) return <Text>No hay categorías.</Text>;
 
   return (
     <Box>
-      {categories.map(item => {
-        if (!item || !item.id) {
+      {categoriesFromHook.map(item => {
+        if (!item || typeof item.id === 'undefined') {
           console.warn('Omitiendo renderizado de item de nivel superior inválido:', item);
           return null;
         }
         return (
-          <TreeItem
+          <TreeNode
             key={item.id}
-            item={item}
-            onSelect={onSelect}
+            node={item}
             selectedId={selectedId}
-            expandedNodes={expandedNodes || []}
-            toggleNode={toggleNode}
-            onEdit={onEdit}
-            onDelete={onDelete}
+            onSelect={onSelect}
+            expandedIds={expandedIds}
+            onToggleNode={onToggleNode}
+            level={0}
           />
         );
       })}
