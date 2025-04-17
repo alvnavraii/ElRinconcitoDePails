@@ -4,6 +4,8 @@ import { AuthContext } from './AuthContext';
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   
   useEffect(() => {
@@ -14,8 +16,10 @@ export const AuthProvider = ({ children }) => {
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
+        setIsAuthenticated(true); // Actualizar si hay datos válidos al cargar
       } catch (error) {
-        console.error('Error al parsear datos de usuario:', error);
+        setIsAuthenticated(false);
+        setError('Error al parsear datos de usuario '+error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
@@ -26,6 +30,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      // Primera llamada - login
       const response = await fetch('http://localhost:8080/api/v1/auth/login', {
         method: 'POST',
         headers: {
@@ -35,16 +40,13 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error de autenticación');
+        throw new Error('Error en la autenticación');
       }
 
       const data = await response.json();
-      
-      // Guardar el token en localStorage
       localStorage.setItem('token', data.token);
-      
-      // Obtener los datos completos del usuario usando la ruta correcta
+
+      // Segunda llamada - obtener datos del usuario
       const userResponse = await fetch(`http://localhost:8080/api/v1/users/email/${email}`, {
         headers: {
           'Authorization': `Bearer ${data.token}`,
@@ -57,15 +59,16 @@ export const AuthProvider = ({ children }) => {
       
       const userData = await userResponse.json();
       
-      // Guardar los datos del usuario en localStorage
+      // Guardar los datos del usuario en localStorage Y en el estado
       localStorage.setItem('user', JSON.stringify(userData));
-      
-      // Actualizar el estado
-      setUser(userData);
-      
-      return userData;
+      setUser(userData); // Asegurarnos de que el estado se actualiza
+      setIsAuthenticated(true); // Actualizar cuando el login es exitoso
+      setError('');
+      return true;
     } catch (error) {
-      console.error('Error de login:', error);
+      console.error('Error en login:', error);
+      setError(error.message);
+      setIsAuthenticated(false);
       throw error;
     }
   };
@@ -74,6 +77,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
+    setIsAuthenticated(false); // Actualizar cuando se cierra sesión
   };
 
   const value = {
@@ -81,6 +85,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
+    error,
+    isAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

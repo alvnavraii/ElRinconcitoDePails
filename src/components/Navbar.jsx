@@ -40,11 +40,22 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   
-  // Obtener el nombre completo del usuario o mostrar "Usuario" si no está disponible
-  const userFullName = user && (user.firstName || user.lastName) 
-    ? `${user.firstName || ''} ${user.lastName || ''}`.trim() 
-    : (user?.displayName || user?.email || 'Usuario');
-  
+  // Añadir logs para depuración
+  console.log('Datos del usuario en Navbar:', {
+    user,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    email: user?.email,
+    avatarUrl: user?.avatarUrl
+  });
+
+  // Modificar la construcción del nombre completo
+  const userFullName = user 
+    ? `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.email
+    : 'Usuario';
+
+  console.log('Nombre completo construido:', userFullName);
+
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -60,6 +71,13 @@ export const Navbar = () => {
   // Agregamos más logs para depuración
   console.log('Usuario completo:', user);
   console.log('User Role:', user?.role);
+
+  // Agregamos más logs específicos para depuración del rol
+  console.log('Estado del usuario:', {
+    isAdmin: user?.admin,
+    roleType: typeof user?.admin,
+    fullUser: user
+  });
 
   // Función para verificar si el token ha expirado
   const checkTokenExpiration = useCallback(() => {
@@ -137,7 +155,7 @@ export const Navbar = () => {
             <RouterLink to="/">{t('home')}</RouterLink>
             <RouterLink to="/products">{t('products')}</RouterLink>
             <RouterLink to="/categories">{t('categories')}</RouterLink>
-            {user?.admin === true && (
+            {(user?.admin === true || user?.admin === 'true') && (
               <RouterLink to="/dashboard">{t('dashboard')}</RouterLink>
             )}
           </HStack>
@@ -156,11 +174,17 @@ export const Navbar = () => {
           {user ? (
             <Menu>
               <MenuButton as={Button} ml={2} rightIcon={<ChevronDownIcon />}>
-                <Avatar size="xs" name={userFullName} mr={2} />
-                {userFullName}
+                <HStack>
+                  <Avatar 
+                    size="sm" 
+                    name={`${user.firstName} ${user.lastName}`} 
+                    src={user.avatarUrl} 
+                  />
+                  <Text>{userFullName}</Text>
+                </HStack>
               </MenuButton>
               <MenuList>
-                <MenuItem as={RouterLink} to="/profile">Perfil</MenuItem>
+                <MenuItem as={RouterLink} to="/profile">{t('profile')}</MenuItem>
                 <MenuItem onClick={handleLogout}>{t('logout')}</MenuItem>
               </MenuList>
             </Menu>

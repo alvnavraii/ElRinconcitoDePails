@@ -112,7 +112,7 @@ export const FeaturedProducts = () => {
               width="100%" 
               height={{ base: "200px", md: "300px" }}
               objectFit="cover"
-              fallbackSrc="https://via.placeholder.com/200x300?text=Producto"
+              fallbackSrc="https://fastly.picsum.photos/id/63/5000/2813.jpg?hmac=HvaeSK6WT-G9bYF_CyB2m1ARQirL8UMnygdU9W6PDvM"
             />
             <Stack p={2}>
               <Text fontSize="sm" fontWeight="bold" color={textColor}>{product.name}</Text>

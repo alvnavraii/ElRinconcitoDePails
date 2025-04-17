@@ -12,6 +12,9 @@
   "manage_languages": "Manage Languages",
   "manage_products": "Manage Products",
   "manage_categories": "Manage Categories",
+
+
+  
   
   "languages_management": "Languages Management",
   "refresh": "Refresh",
@@ -169,5 +172,39 @@
     "month": "Month",
     "graph": "Sales Graph",
     "graph_description": "Sales and profits overview"
-  }
+  },
+  "categories_management": "Categories Management",
+  "add_category": "Add Category",
+  "edit_category": "Edit Category",
+  "delete_category": "Delete Category",
+  "search_category": "Search category...",
+  "slug": "Slug",
+  "parent_category": "Parent Category",
+  "created_by": "Created By",
+  "updated_by": "Updated By",
+  "no_categories_found": "No categories found",
+  "select_parent_category": "Select Parent Category",
+  "root_level": "Root Level",
+  "save": "Save",
+  "category_added": "Category added successfully",
+  "category_updated": "Category updated successfully",
+  "category_deleted": "Category deleted successfully",
+  "confirm_delete": "Are you sure?",
+  "delete_category_confirmation": "Do you really want to delete the category",
+  "yes_delete": "Yes, delete it",
+  "deleted": "Deleted!",
+  "ok": "OK",
+  "success": "Success",
+  "no_description": "No description",
+  "audit_information": "Audit Information",
+  "created_at": "Created at",
+  "updated_at": "Updated at",
+  "new_category": "New Category",
+  "edit_category_title": "Edit Category",
+  "name_required": "Name is required",
+  "enter_category_name": "Enter category name",
+  "enter_category_slug": "Enter category slug",
+  "slug_description": "Unique identifier for URL (will be generated automatically if left blank)",
+  "enter_category_description": "Enter category description",
+  "description_optional": "Description is optional"
 } 

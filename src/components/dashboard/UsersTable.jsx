@@ -18,11 +18,18 @@ import {
   Center,
   Text,
   useToast,
+  Card,
+  CardBody,
+  InputGroup,
+  InputLeftElement,
+  useColorModeValue,
+  Input,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { UserModal } from './UserModal';
 import { useTranslation } from 'react-i18next';
+import { FiPlus, FiEdit, FiSearch, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
 
 export const UsersTable = () => {
   const [users, setUsers] = useState([]);
@@ -32,6 +39,9 @@ export const UsersTable = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState('');
+  const bgCard = useColorModeValue('white', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'white');
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -116,86 +126,130 @@ export const UsersTable = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Center h="50vh">
-        <Spinner size="xl" />
-      </Center>
-    );
-  }
-
-  if (error) {
-    return (
-      <Center h="50vh" flexDirection="column">
-        <Text color="red.500" mb={4}>{t('error')}: {error}</Text>
-        <Button onClick={fetchUsers}>{t('retry')}</Button>
-      </Center>
-    );
-  }
+  // Filtrar usuarios según el término de búsqueda
+  const filteredUsers = users.filter(user => 
+    user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb={4}>
-        <Heading size="lg">{t('users_management')}</Heading>
-        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={handleAdd}>
-          {t('add_user')}
-        </Button>
-      </Flex>
+      <Card bg={bgCard} mb={6} boxShadow="md">
+        <CardBody>
+          <Flex justifyContent="space-between" alignItems="center" mb={6}>
+            <Heading size="lg" color={textColor}>{t('users_management')}</Heading>
+            <Flex>
+              <Button 
+                leftIcon={<FiRefreshCw />} 
+                colorScheme="blue" 
+                variant="outline" 
+                mr={2}
+                onClick={fetchUsers}
+                isLoading={isLoading}
+              >
+                {t('refresh')}
+              </Button>
+              <Button 
+                leftIcon={<FiPlus />} 
+                colorScheme="blue" 
+                onClick={handleAdd}
+              >
+                {t('add_user')}
+              </Button>
+            </Flex>
+          </Flex>
 
-      <Table variant="simple">
-        <Thead>
-          <Tr>
-            <Th>{t('avatar')}</Th>
-            <Th>{t('name')}</Th>
-            <Th>{t('email')}</Th>
-            <Th>{t('role')}</Th>
-            <Th>{t('status')}</Th>
-            <Th>{t('actions')}</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {users.map((user) => (
-            <Tr key={user.id}>
-              <Td>
-                <Avatar 
-                  size="sm" 
-                  name={`${user.firstName} ${user.lastName}`} 
-                  src={user.avatarUrl} 
-                />
-              </Td>
-              <Td>{`${user.firstName} ${user.lastName}`}</Td>
-              <Td>{user.email}</Td>
-              <Td>
-                <Badge colorScheme={user.admin ? 'purple' : 'gray'}>
-                  {user.admin ? 'Admin' : 'Usuario'}
-                </Badge>
-              </Td>
-              <Td>
-                <Badge colorScheme={user.active ? 'green' : 'red'}>
-                  {user.active ? 'Activo' : 'Inactivo'}
-                </Badge>
-              </Td>
-              <Td>
-                <HStack spacing={2}>
-                  <IconButton
-                    icon={<EditIcon />}
-                    onClick={() => handleEdit(user)}
-                    aria-label="Editar"
-                    size="sm"
-                  />
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    onClick={() => handleDelete(user.id)}
-                    aria-label="Eliminar"
-                    size="sm"
-                    colorScheme="red"
-                  />
-                </HStack>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          <InputGroup mb={6}>
+            <InputLeftElement pointerEvents="none">
+              <FiSearch color="gray.300" />
+            </InputLeftElement>
+            <Input
+              placeholder={t('search_user')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </InputGroup>
+
+          {isLoading && !users.length ? (
+            <Flex justify="center" align="center" height="200px">
+              <Spinner size="xl" color="blue.500" />
+            </Flex>
+          ) : error ? (
+            <Box textAlign="center" p={4} color="red.500">
+              <Text>{error}</Text>
+              <Button mt={4} onClick={fetchUsers}>{t('retry')}</Button>
+            </Box>
+          ) : (
+            <Box overflowX="auto">
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>{t('avatar')}</Th>
+                    <Th>{t('name')}</Th>
+                    <Th>{t('email')}</Th>
+                    <Th>{t('role')}</Th>
+                    <Th>{t('status')}</Th>
+                    <Th>{t('actions')}</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user) => (
+                      <Tr key={user.id}>
+                        <Td>
+                          <Avatar 
+                            size="sm" 
+                            name={`${user.firstName} ${user.lastName}`} 
+                            src={user.avatarUrl} 
+                          />
+                        </Td>
+                        <Td>{`${user.firstName} ${user.lastName}`}</Td>
+                        <Td>{user.email}</Td>
+                        <Td>
+                          <Badge colorScheme={user.admin ? 'purple' : 'gray'}>
+                            {user.admin ? t('admin') : t('user')}
+                          </Badge>
+                        </Td>
+                        <Td>
+                          <Badge colorScheme={user.active ? 'green' : 'red'}>
+                            {user.active ? t('active') : t('inactive')}
+                          </Badge>
+                        </Td>
+                        <Td>
+                          <Flex>
+                            <IconButton
+                              icon={<FiEdit />}
+                              aria-label={t('edit_user')}
+                              colorScheme="blue"
+                              variant="ghost"
+                              onClick={() => handleEdit(user)}
+                              mr={2}
+                            />
+                            <IconButton
+                              icon={<FiTrash2 />}
+                              aria-label={t('delete_user')}
+                              colorScheme="red"
+                              variant="ghost"
+                              onClick={() => handleDelete(user.id)}
+                            />
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={6} textAlign="center" py={4}>
+                        {t('no_users_found')}
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+            </Box>
+          )}
+        </CardBody>
+      </Card>
 
       <UserModal
         isOpen={isOpen}

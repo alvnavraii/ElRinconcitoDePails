@@ -16,6 +16,27 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
 
+// Fallback component for when flag images fail to load
+const FlagFallback = ({ languageCode }) => {
+  const bgColor = useColorModeValue('gray.200', 'gray.600');
+  const textColor = useColorModeValue('gray.700', 'gray.100');
+  
+  return (
+    <Center 
+      w="20px" 
+      h="15px" 
+      bg={bgColor} 
+      mr={2} 
+      borderRadius="1px"
+      fontSize="10px"
+      fontWeight="bold"
+      color={textColor}
+    >
+      {languageCode.toUpperCase()}
+    </Center>
+  );
+};
+
 const LanguageSelector = () => {
   const { i18n, t } = useTranslation();
   const [languages, setLanguages] = useState([]);
@@ -172,7 +193,10 @@ const LanguageSelector = () => {
                   alt={currentLanguage.name} 
                   boxSize="20px" 
                   mr={2}
-                  fallback={<Box w="20px" h="15px" bg="gray.200" mr={2} />}
+                  onError={() => {
+                    console.error(`Failed to load flag image for ${currentLanguage.code}: ${currentLanguage.flagUrl}`);
+                  }}
+                  fallback={<FlagFallback languageCode={currentLanguage.code} />}
                 />
               )}
               <Text>{getTranslatedName(currentLanguage.code.toLowerCase())}</Text>
@@ -202,7 +226,10 @@ const LanguageSelector = () => {
                     alt={language.name} 
                     boxSize="20px" 
                     mr={2}
-                    fallback={<Box w="20px" h="15px" bg="gray.200" mr={2} />}
+                    onError={() => {
+                      console.error(`Failed to load flag image for ${language.code}: ${language.flagUrl}`);
+                    }}
+                    fallback={<FlagFallback languageCode={language.code} />}
                   />
                 )}
                 <Text>{getTranslatedName(language.code.toLowerCase())}</Text>

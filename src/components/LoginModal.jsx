@@ -63,7 +63,15 @@ export const LoginModal = ({ isOpen, onClose }) => {
         isClosable: true,
       });
     } catch (err) {
-      setError(err.message || t('error'));
+      console.error('Error en login:', err);
+      setError(err.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.');
+      toast({
+        title: 'Error de autenticación',
+        description: err.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setIsLoading(false);
     }
