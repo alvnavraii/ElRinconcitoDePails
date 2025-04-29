@@ -29,7 +29,6 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCategories } from '../../../hooks/useCategories';
 import Tree from '../../common/Tree';
-import { useTranslation } from 'react-i18next';
 
 // Función simple para generar slugs (puedes mejorarla si necesitas)
 const generateSlug = (text) => {
@@ -76,7 +75,6 @@ export const CategoryForm = () => {
   
   const toast = useToast();
   const navigate = useNavigate();
-  const { t } = useTranslation();
   
   // Observar el campo 'name'
   const categoryName = watch('name');
@@ -163,10 +161,6 @@ export const CategoryForm = () => {
     onClose();
   };
 
-  const handleDeselectParent = () => {
-    console.log("Botón deseleccionar padre clickeado");
-    setSelectedParentId(null);
-  };
 
   const handleToggleNode = useCallback((nodeId) => {
     setExpandedIds(prevExpandedIds => {

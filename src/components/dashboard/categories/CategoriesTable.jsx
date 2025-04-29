@@ -309,14 +309,6 @@ export const CategoriesTable = () => {
     navigate('/dashboard/categories/new');
   };
 
-  // Función para editar una categoría
-  const handleEditCategory = (category) => {
-    setSelectedCategory(category);
-    // Si usas un modal para editar:
-    // onEditOpen();
-    // Si prefieres navegar a una página de edición:
-    navigate(`/dashboard/categories/edit/${category.id}`);
-  };
 
   return (
     <Card bg={bgCard} boxShadow="sm" borderRadius="lg">
