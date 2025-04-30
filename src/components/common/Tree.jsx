@@ -9,7 +9,9 @@ const Tree = ({
   expandedIds,
   onToggleNode,
   loading,
-  error
+  error,
+  onEdit,
+  onDelete
 }) => {
   const { categories: categoriesFromHook } = useCategories();
 
@@ -32,6 +34,8 @@ const Tree = ({
             onSelect={onSelect}
             expandedIds={expandedIds}
             onToggleNode={onToggleNode}
+            onEdit={onEdit}
+            onDelete={onDelete}
             level={0}
           />
         );

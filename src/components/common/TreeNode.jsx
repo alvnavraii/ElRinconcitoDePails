@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, IconButton, Text, Flex, useColorModeValue } from '@chakra-ui/react';
-import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
+import { FaChevronRight, FaChevronDown, FaEdit, FaTrash } from 'react-icons/fa';
 
-const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level = 0 }) => {
+const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, onEdit, onDelete, level = 0 }) => {
   console.log(`TreeNode ID: ${node.id}, Received selectedId: ${selectedId}, Type of node.id: ${typeof node.id}, Type of selectedId: ${typeof selectedId}`);
 
   const isSelected = Number(selectedId) === Number(node.id);
@@ -69,6 +69,33 @@ const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level
         >
           {node.name}
         </Text>
+        {isSelected && (
+          <>
+            <IconButton
+              aria-label="Editar categoría"
+              icon={<FaEdit />}
+              size="xs"
+              variant="ghost"
+              ml={1}
+              onClick={e => {
+                e.stopPropagation();
+                if (onEdit) onEdit(node);
+              }}
+            />
+            <IconButton
+              aria-label="Eliminar categoría"
+              icon={<FaTrash />}
+              size="xs"
+              variant="ghost"
+              color="red.500"
+              ml={1}
+              onClick={e => {
+                e.stopPropagation();
+                if (onDelete) onDelete(node);
+              }}
+            />
+          </>
+        )}
       </Flex>
       {isExpanded && hasChildren && (
         <Box>
@@ -80,6 +107,8 @@ const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level
               onSelect={onSelect}
               expandedIds={expandedIds}
               onToggleNode={onToggleNode}
+              onEdit={onEdit}
+              onDelete={onDelete}
               level={level + 1}
             />
           ))}

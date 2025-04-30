@@ -29,6 +29,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCategories } from '../../../hooks/useCategories';
 import Tree from '../../common/Tree';
+import EditCategoryModal from './EditCategoryModal';
+import Swal from 'sweetalert2';
 
 // Función simple para generar slugs (puedes mejorarla si necesitas)
 const generateSlug = (text) => {
@@ -72,6 +74,8 @@ export const CategoryForm = () => {
   const [selectedParentId, setSelectedParentId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState(null);
   
   const toast = useToast();
   const navigate = useNavigate();
@@ -161,7 +165,6 @@ export const CategoryForm = () => {
     onClose();
   };
 
-
   const handleToggleNode = useCallback((nodeId) => {
     setExpandedIds(prevExpandedIds => {
       const newExpandedIds = new Set(prevExpandedIds);
@@ -190,6 +193,60 @@ export const CategoryForm = () => {
   const handleCancel = () => {
     resetForm(); // Llama a la función que limpia los estados
     navigate('/dashboard/categories'); // Navega de vuelta a la lista
+  };
+
+  // --- NUEVO: abrir modal de edición ---
+  const handleEditCategory = (category) => {
+    setCategoryToEdit(category);
+    setEditModalOpen(true);
+  };
+
+  // --- NUEVO: cerrar modal de edición ---
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setCategoryToEdit(null);
+  };
+
+  const handleDeleteCategory = async (category) => {
+    // Verificar si la categoría tiene hijos
+    if (category.children && category.children.length > 0) {
+      await Swal.fire({
+        title: 'No se puede eliminar',
+        text: 'No puedes eliminar una categoría que tiene subcategorías. Elimina o mueve las subcategorías primero.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+    const result = await Swal.fire({
+      title: '¿Eliminar categoría?',
+      text: `¿Estás seguro de que deseas eliminar la categoría "${category.name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:8080/api/v1/categories/${category.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${await response.text()}`);
+        }
+        await Swal.fire('Eliminada', 'La categoría ha sido eliminada.', 'success');
+        fetchCategories();
+      } catch (error) {
+        await Swal.fire('Error', error.message, 'error');
+      }
+    }
   };
 
   if (loadingCategories) {
@@ -256,6 +313,9 @@ export const CategoryForm = () => {
                   onSelect={handleSelectParent}
                   expandedIds={expandedIds}
                   onToggleNode={handleToggleNode}
+                  onEdit={handleEditCategory}
+                  onDelete={handleDeleteCategory}
+                  categories={allCategories}
                 />
               </Box>
             </FormControl>
@@ -305,6 +365,16 @@ export const CategoryForm = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <EditCategoryModal
+        isOpen={editModalOpen}
+        onClose={handleCloseEditModal}
+        category={categoryToEdit}
+        categories={allCategories}
+        onSuccess={() => {
+          fetchCategories();
+          handleCloseEditModal();
+        }}
+      />
     </>
   );
 };
