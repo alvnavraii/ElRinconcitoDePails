@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, Text, Flex } from '@chakra-ui/react';
+import { Box, IconButton, Text, Flex, useColorModeValue } from '@chakra-ui/react';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 
 const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level = 0 }) => {
@@ -10,6 +10,8 @@ const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level
   const hasChildren = node.children && node.children.length > 0;
 
   console.log(`Node ${node.id} - isSelected: ${isSelected}`);
+
+  const hoverBg = useColorModeValue('gray.100', 'blackAlpha.700');
 
   const handleToggleClick = (e) => {
     e.stopPropagation();
@@ -36,7 +38,7 @@ const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, level
         cursor="pointer"
         onClick={handleSelectClick}
         _hover={{
-          bg: isSelected ? 'blue.200' : 'gray.100',
+          bg: isSelected ? 'blue.200' : hoverBg,
         }}
         role="button"
         aria-pressed={isSelected}

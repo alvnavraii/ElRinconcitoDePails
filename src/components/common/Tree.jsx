@@ -16,7 +16,7 @@ import { useCategories } from '../../hooks/useCategories';
 import TreeNode from './TreeNode'; // Asegúrate que la ruta es correcta
 
 const TreeItem = ({ item, level = 0, onSelect, selectedId, expandedNodes, toggleNode, onEdit, onDelete }) => {
-  const bgHover = useColorModeValue('gray.100', 'gray.600');
+  const bgHover = useColorModeValue('gray.100', 'gray.700');
   const bgSelected = useColorModeValue('blue.50', 'blue.900');
   const iconColor = useColorModeValue('gray.600', 'gray.400');
   const disabledIconColor = useColorModeValue('gray.300', 'gray.600');
@@ -181,4 +181,4 @@ const Tree = ({
   );
 };
 
-export default Tree; 
+export default Tree;
