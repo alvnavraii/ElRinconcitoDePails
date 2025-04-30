@@ -12,6 +12,7 @@ import { UsersTable } from './components/dashboard/users/UsersTable';
 import { DashboardHome } from './components/dashboard/controlPanel/DashboardHome';
 import LanguagesTable from './components/dashboard/languages/LanguagesTable';
 import CategoryForm from './components/dashboard/categories/CategoryForm';
+import CategoryTranslations from './components/dashboard/translations/CategoryTranslations';
 import theme from './theme';
 import { CategoryProvider } from './context/categories/CategoryProvider';
 
@@ -43,10 +44,13 @@ function App() {
                         <Route index element={<DashboardHome />} />
                         <Route path="users" element={<UsersTable />} />
                         <Route path="languages" element={<LanguagesTable />} />
-                          <Route path="categories">
+                        <Route path="categories">
                           <Route index element={<CategoryForm />} />
                           <Route path="new" element={<CategoryForm />} />
                           <Route path="edit/:id" element={<CategoryForm />} />
+                        </Route>
+                        <Route path="translations">
+                          <Route path="categories" element={<CategoryTranslations />} />
                         </Route>
                         <Route path="products" element={<div>Productos</div>} />
                         <Route path="brands" element={<div>Marcas</div>} />

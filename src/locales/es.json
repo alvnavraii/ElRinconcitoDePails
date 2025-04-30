@@ -6,13 +6,11 @@
   "login": "Iniciar Sesión",
   "logout": "Cerrar Sesión",
   "language": "Idioma",
-  
   "dashboard_home": "Inicio del Panel",
   "manage_users": "Gestionar Usuarios",
   "manage_languages": "Gestionar Idiomas",
   "manage_products": "Gestionar Productos",
   "manage_categories": "Gestionar Categorías",
-  
   "languages_management": "Gestión de Idiomas",
   "refresh": "Actualizar",
   "new_language": "Nuevo Idioma",
@@ -27,7 +25,6 @@
   "active": "Activo",
   "inactive": "Inactivo",
   "no_languages_found": "No se encontraron idiomas",
-  
   "edit_language": "Editar Idioma",
   "create_language": "Crear Nuevo Idioma",
   "allow_code_edit": "Permitir editar código (¡Cuidado!)",
@@ -39,22 +36,18 @@
   "cancel": "Cancelar",
   "create": "Crear",
   "update": "Actualizar",
-  
   "delete_language": "Eliminar Idioma",
   "delete_confirmation": "¿Estás seguro de que deseas eliminar el idioma",
   "delete_confirmation_action": "Esta acción no se puede deshacer.",
   "delete": "Eliminar",
-  
   "language_added": "Idioma añadido",
   "language_updated": "Idioma actualizado",
   "language_deleted": "Idioma eliminado",
   "status_updated": "Estado actualizado",
   "error": "Error",
-  
   "all_rights_reserved": "Todos los derechos reservados",
   "privacy_policy": "Política de Privacidad",
   "terms_of_service": "Términos de Servicio",
-  
   "password": "Contraseña",
   "forgot_password": "¿Olvidaste tu contraseña?",
   "no_account": "¿No tienes una cuenta?",
@@ -79,7 +72,6 @@
   "light_mode": "Modo claro",
   "continue_with": "O continúa con",
   "email": "EMAIL",
-  
   "admin_panel": "Panel de Administración",
   "navigation": "NAVEGACIÓN",
   "ecommerce": "ECOMMERCE",
@@ -89,6 +81,7 @@
   "orders": "Pedidos",
   "sales": "Ventas",
   "shipping": "Envíos",
+  "languages": "Idiomas",
   "language_names": {
     "es": "Español",
     "en": "Inglés",
@@ -129,6 +122,8 @@
   "users_management": "Gestión de Usuarios",
   "add_user": "Agregar Usuario",
   "avatar": "Avatar",
+  "role": "Rol",
+  "retry": "Reintentar",
   "dashboard_items": {
     "users": "Usuarios",
     "orders": "Pedidos",
@@ -174,7 +169,11 @@
   "search_category": "Buscar categoría...",
   "slug": "Slug",
   "parent_category": "Categoría Padre",
+  "created_by": "Creado por",
+  "updated_by": "Actualizado por",
   "no_categories_found": "No se encontraron categorías",
+  "select_parent_category": "Selecciona una categoría padre",
+  "root_level": "Nivel raíz (sin padre)",
   "save": "Guardar",
   "category_added": "Categoría añadida correctamente",
   "category_updated": "Categoría actualizada correctamente",
@@ -188,9 +187,7 @@
   "no_description": "Sin descripción",
   "audit_information": "Información de Auditoría",
   "created_at": "Creado el",
-  "created_by": "Creado por",
   "updated_at": "Actualizado el",
-  "updated_by": "Actualizado por",
   "new_category": "Nueva Categoría",
   "edit_category_title": "Editar Categoría",
   "name_required": "El nombre es obligatorio",
@@ -198,7 +195,5 @@
   "enter_category_slug": "Introduce el slug de la categoría",
   "slug_description": "Identificador único para la URL (se generará automáticamente si se deja en blanco)",
   "enter_category_description": "Introduce la descripción de la categoría",
-  "description_optional": "La descripción es opcional",
-  "select_parent_category": "Selecciona una categoría padre",
-  "root_level": "Nivel raíz (sin padre)"
+  "description_optional": "La descripción es opcional"
 }

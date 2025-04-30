@@ -18,15 +18,16 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { FiMenu, FiUsers, FiShoppingBag, FiBox, FiTag, FiDollarSign, FiGrid, FiTruck, FiSettings, FiBarChart2, FiHome, FiGlobe } from 'react-icons/fi';
+import { FiMenu, FiUsers, FiShoppingBag, FiBox, FiTag, FiDollarSign, FiGrid, FiTruck, FiSettings, FiBarChart2, FiHome, FiGlobe, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SidebarContent = ({ ...rest }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [translationsOpen, setTranslationsOpen] = useState(false);
 
   const NavItem = ({ icon, children, to, isExternal, ...props }) => {
     const isActive = location.pathname === to;
@@ -111,6 +112,29 @@ const SidebarContent = ({ ...rest }) => {
           <NavItem icon={FiGlobe} to="/dashboard/languages">{t('languages')}</NavItem>
 
           <Text px="4" py="2" fontSize="sm" fontWeight="semibold" color="gray.500" mt="4">
+            {t('translations')}
+          </Text>
+          <Flex
+            align="center"
+            px="4"
+            py="3"
+            cursor="pointer"
+            fontWeight="semibold"
+            onClick={() => setTranslationsOpen((open) => !open)}
+            _hover={{ bg: useColorModeValue('blue.50', 'blue.800'), color: useColorModeValue('blue.600', 'blue.200') }}
+          >
+            <Icon mr="4" fontSize="16" as={FiGlobe} />
+            {t('translations')}
+            <Icon as={translationsOpen ? FiChevronUp : FiChevronDown} ml={2} fontSize="16" />
+          </Flex>
+          {translationsOpen && (
+            <VStack align="stretch" spacing={0} pl={8}>
+              <NavItem to="/dashboard/translations/categories">{t('categories')}</NavItem>
+              {/* Aquí puedes añadir más entidades en el futuro */}
+            </VStack>
+          )}
+
+          <Text px="4" py="2" fontSize="sm" fontWeight="semibold" color="gray.500" mt="4">
             {t('configuration')}
           </Text>
           <NavItem icon={FiSettings} to="/dashboard/settings">{t('settings')}</NavItem>
@@ -193,4 +217,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout; 
+export default DashboardLayout;
