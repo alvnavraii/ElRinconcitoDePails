@@ -198,6 +198,7 @@ export const CategoryForm = () => {
 
   const inputBg = useColorModeValue('gray.100', 'gray.700');
   const treeBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const formBg = useColorModeValue('white', 'gray.800'); // Añadido para el fondo del formulario
 
   console.log('Renderizando CategoryForm. selectedParentId actual:', selectedParentId);
 
@@ -206,7 +207,7 @@ export const CategoryForm = () => {
 
   return (
     <>
-      <Box as="form" onSubmit={handleSubmit(onSubmit)} p={5} borderWidth="1px" borderRadius="lg" boxShadow="sm" bg="white">
+      <Box as="form" onSubmit={handleSubmit(onSubmit)} p={5} borderWidth="1px" borderRadius="lg" boxShadow="sm" bg={formBg}>
         <Flex direction={{ base: 'column', md: 'row' }} gap={6}>
           <VStack flex="1" spacing={4} align="stretch">
             <FormControl isInvalid={errors.name}>
