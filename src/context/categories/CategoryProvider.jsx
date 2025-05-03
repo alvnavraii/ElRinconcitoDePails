@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { CategoryContext } from './context';
 import { useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { fetchCategories as fetchCategoriesApi } from '../../services/categoriesService';
 
 // Proveedor del contexto (componente)
 export function CategoryProvider({ children }) {
@@ -12,12 +13,9 @@ export function CategoryProvider({ children }) {
   const { t } = useTranslation();
 
   const fetchCategories = useCallback(async () => {
-    console.log('🔍 Iniciando fetchCategories');
     setIsLoading(true);
     setError(null);
     const token = localStorage.getItem('token');
-    console.log('🔑 Token encontrado:', !!token);
-
     if (!token) {
       setError('No se encontró token de autenticación');
       setIsLoading(false);
@@ -31,39 +29,11 @@ export function CategoryProvider({ children }) {
       });
       return;
     }
-
     try {
-      const apiUrl = 'http://localhost:8080/api/v1/categories';
-      console.log('🌐 Realizando solicitud a la API de categorías');
-      console.log('URL:', apiUrl);
-      const response = await fetch(apiUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      });
-
-      console.log(`📊 Respuesta recibida: ${response.status}`);
-
-      if (!response.ok) {
-        let errorBody = await response.text();
-        console.error('❌ Error Body:', errorBody);
-        try {
-          const errorJson = JSON.parse(errorBody);
-          errorBody = errorJson.message || errorJson.error || JSON.stringify(errorJson);
-        } catch(e) {
-          errorBody = errorBody.substring(0, 100) + (errorBody.length > 100 ? '...' : '');
-        }
-        throw new Error(`Error ${response.status}: ${errorBody}`);
-      }
-
-      const data = await response.json();
-      console.log('📦 Datos recibidos de la API:', data);
+      const data = await fetchCategoriesApi(token);
       setCategories(data);
       setError(null);
-
     } catch (err) {
-      console.error('❌ Error fetching categories:', err);
       const errorMessage = err.message || t('unknownError');
       setError(errorMessage);
       setCategories([]);
@@ -76,7 +46,6 @@ export function CategoryProvider({ children }) {
       });
     } finally {
       setIsLoading(false);
-      console.log('🏁 fetchCategories completado');
     }
   }, [toast, t]);
 
@@ -99,4 +68,4 @@ export function CategoryProvider({ children }) {
       {children}
     </CategoryContext.Provider>
   );
-} 
+}

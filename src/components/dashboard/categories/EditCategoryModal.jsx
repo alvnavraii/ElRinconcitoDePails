@@ -20,6 +20,7 @@ import {
   Textarea
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { updateCategory } from '../../../services/categoriesService';
 
 // --- 1. Función auxiliar para aplanar el árbol con indentación ---
 const flattenTreeForSelect = (nodes, level = 0, prefix = ' -- ') => {
@@ -131,9 +132,6 @@ const EditCategoryModal = ({ isOpen, onClose, category, onSuccess, categories = 
         throw new Error(`ID de categoría inválido: ${formData.id}`);
       }
       
-      const url = `http://localhost:8080/api/v1/categories/${categoryId}`;
-      console.log('URL de la petición PUT:', url);
-      
       // Preparar los datos para enviar al servidor
       const dataToSend = {
         name: formData.name || null,
@@ -152,32 +150,9 @@ const EditCategoryModal = ({ isOpen, onClose, category, onSuccess, categories = 
       console.log('Datos a enviar en la petición PUT:', JSON.stringify(dataToSend, null, 2));
       
       // Realizar la petición PUT
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(dataToSend)
-      });
+      const updated = await updateCategory(token, categoryId, dataToSend);
       
-      console.log('Respuesta del servidor - Status:', response.status);
-      
-      // Intentar obtener el cuerpo de la respuesta
-      let responseBody;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        responseBody = await response.json();
-        console.log('Respuesta del servidor (JSON):', responseBody);
-      } else {
-        responseBody = await response.text();
-        console.log('Respuesta del servidor (texto):', responseBody);
-      }
-      
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${typeof responseBody === 'string' ? responseBody : JSON.stringify(responseBody)}`);
-      }
+      console.log('Respuesta del servidor - Actualización exitosa:', updated);
       
       // Mostrar mensaje de éxito
       toast({
@@ -304,4 +279,4 @@ const EditCategoryModal = ({ isOpen, onClose, category, onSuccess, categories = 
   );
 };
 
-export default EditCategoryModal; 
+export default EditCategoryModal;

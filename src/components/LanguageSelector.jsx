@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { fetchLanguages } from '../services/languagesService';
 
 // Fallback component for when flag images fail to load
 const FlagFallback = ({ languageCode }) => {
@@ -63,24 +64,13 @@ const LanguageSelector = () => {
     }
   }, [i18n]);
 
-  // Cargar idiomas desde la API
+  // Cargar idiomas desde el servicio
   useEffect(() => {
-    const fetchLanguages = async () => {
+    const fetchLanguagesFromService = async () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/v1/languages', {
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Error al cargar los idiomas');
-        }
-        
-        const data = await response.json();
+        const data = await fetchLanguages(token);
         // Filtrar solo los idiomas activos
         const activeLanguages = data.filter(lang => lang.isActive);
         setLanguages(activeLanguages);
@@ -118,8 +108,7 @@ const LanguageSelector = () => {
         setIsLoading(false);
       }
     };
-    
-    fetchLanguages();
+    fetchLanguagesFromService();
   }, []);
   
   // Actualizar el idioma actual cuando cambia i18n.language o languages
@@ -252,4 +241,4 @@ const LanguageSelector = () => {
   );
 };
 
-export default LanguageSelector; 
+export default LanguageSelector;

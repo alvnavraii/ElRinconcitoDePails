@@ -31,6 +31,7 @@ import { useCategories } from '../../../hooks/useCategories';
 import Tree from '../../common/Tree';
 import EditCategoryModal from './EditCategoryModal';
 import Swal from 'sweetalert2';
+import { createCategory, updateCategory } from '../../../services/categoriesService';
 
 // Función simple para generar slugs (puedes mejorarla si necesitas)
 const generateSlug = (text) => {
@@ -111,28 +112,13 @@ export const CategoryForm = () => {
       ...data,
       parentId: selectedParentId,
     };
-
-    const apiUrl = id
-      ? `http://localhost:8080/api/v1/categories/${id}`
-      : 'http://localhost:8080/api/v1/categories';
-    const method = id ? 'PUT' : 'POST';
-
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(apiUrl, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(categoryData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error ${response.status}`);
+      if (id) {
+        await updateCategory(token, id, categoryData);
+      } else {
+        await createCategory(token, categoryData);
       }
-
       toast({
         title: `Categoría ${id ? 'actualizada' : 'creada'}.`,
         status: 'success',
@@ -141,7 +127,6 @@ export const CategoryForm = () => {
       });
       fetchCategories();
       navigate('/dashboard/categories');
-
     } catch (error) {
       toast({
         title: 'Error al guardar',
