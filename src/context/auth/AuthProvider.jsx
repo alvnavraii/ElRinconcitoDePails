@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
+import { login as loginService, fetchCurrentUser } from '../../services/authService';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -30,39 +31,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // Primera llamada - login
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error en la autenticación');
-      }
-
-      const data = await response.json();
+      // Usar el servicio para login
+      const data = await loginService({ email, password });
       localStorage.setItem('token', data.token);
 
-      // Segunda llamada - obtener datos del usuario
-      const userResponse = await fetch(`http://localhost:8080/api/v1/users/email/${email}`, {
-        headers: {
-          'Authorization': `Bearer ${data.token}`,
-        },
-      });
-      
-      if (!userResponse.ok) {
-        throw new Error('Error al obtener datos del usuario');
-      }
-      
-      const userData = await userResponse.json();
-      
-      // Guardar los datos del usuario en localStorage Y en el estado
+      // Obtener datos del usuario autenticado
+      const userData = await fetchCurrentUser(data.token);
       localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData); // Asegurarnos de que el estado se actualiza
-      setIsAuthenticated(true); // Actualizar cuando el login es exitoso
+      setUser(userData);
+      setIsAuthenticated(true);
       setError('');
       return true;
     } catch (error) {

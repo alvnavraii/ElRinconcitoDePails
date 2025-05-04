@@ -162,6 +162,7 @@
     "graph": "Gráfico de Ventas",
     "graph_description": "Resumen de ventas y beneficios"
   },
+  "translations": "Traducciones",
   "categories_management": "Gestión de Categorías",
   "add_category": "Añadir Categoría",
   "edit_category": "Editar Categoría",

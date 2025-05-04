@@ -107,6 +107,7 @@
       "overview": "Overview"
     }
   },
+  "translations":"Translations",
   "sales_chart": "Sales Chart",
   "sales_chart_description": "Monthly summary of sales, profits, and costs",
   "edit_user": "Edit User",
