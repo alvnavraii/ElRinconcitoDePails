@@ -22,7 +22,6 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Stack,
   Spinner,
   AlertDialog,
   AlertDialogBody,
@@ -64,8 +63,8 @@ export const LanguagesTable = () => {
       setError(err.message);
       setLanguages([]);
       toast({
-        title: 'Error',
-        description: err.message,
+        title: t('error'),
+        description: t('error_message', { error: err.message }),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -73,7 +72,7 @@ export const LanguagesTable = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, t]);
 
   useEffect(() => {
     fetchLanguagesHandler();
@@ -93,8 +92,8 @@ export const LanguagesTable = () => {
       const createdLanguage = await createLanguage(token, newLanguage);
       setLanguages([...languages, createdLanguage]);
       toast({
-        title: 'Lenguaje añadido',
-        description: `El lenguaje ${newLanguage.name} ha sido añadido correctamente.`,
+        title: t('language_added'),
+        description: t('language_added_desc', { name: newLanguage.name }),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -102,8 +101,8 @@ export const LanguagesTable = () => {
       onClose();
     } catch (err) {
       toast({
-        title: 'Error',
-        description: err.message,
+        title: t('error'),
+        description: t('error_message', { error: err.message }),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -120,8 +119,8 @@ export const LanguagesTable = () => {
       const updated = await updateLanguage(token, updatedLanguage.id, updatedLanguage);
       setLanguages(languages.map(language => language.id === updated.id ? updated : language));
       toast({
-        title: 'Lenguaje actualizado',
-        description: `El lenguaje ${updatedLanguage.name} ha sido actualizado correctamente.`,
+        title: t('language_updated'),
+        description: t('language_updated_desc', { name: updatedLanguage.name }),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -129,8 +128,8 @@ export const LanguagesTable = () => {
       onClose();
     } catch (err) {
       toast({
-        title: 'Error',
-        description: err.message,
+        title: t('error'),
+        description: t('error_message', { error: err.message }),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -147,8 +146,8 @@ export const LanguagesTable = () => {
       await deleteLanguage(token, languageToDelete.id);
       setLanguages(languages.filter(lang => lang.id !== languageToDelete.id));
       toast({
-        title: 'Lenguaje eliminado',
-        description: `El lenguaje ${languageToDelete.name} ha sido eliminado correctamente.`,
+        title: t('language_deleted'),
+        description: t('language_deleted_desc', { name: languageToDelete.name }),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -157,8 +156,8 @@ export const LanguagesTable = () => {
       setLanguageToDelete(null);
     } catch (err) {
       toast({
-        title: 'Error',
-        description: err.message,
+        title: t('error'),
+        description: t('error_message', { error: err.message }),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -175,16 +174,16 @@ export const LanguagesTable = () => {
       const updated = await updateLanguage(token, language.id, updatedLanguage);
       setLanguages(languages.map(lang => lang.id === updated.id ? updated : lang));
       toast({
-        title: 'Estado actualizado',
-        description: `El lenguaje ${language.name} ha sido ${updated.isActive ? 'activado' : 'desactivado'}.`,
+        title: t('status_updated'),
+        description: t('status_updated_desc', { name: language.name, status: updated.isActive ? t('active_status') : t('inactive_status') }),
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
     } catch (err) {
       toast({
-        title: 'Error',
-        description: err.message,
+        title: t('error'),
+        description: t('error_message', { error: err.message }),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -252,7 +251,7 @@ export const LanguagesTable = () => {
           ) : error ? (
             <Box textAlign="center" p={4} color="red.500">
               <Text>{error}</Text>
-              <Button mt={4} onClick={fetchLanguagesHandler}>Reintentar</Button>
+              <Button mt={4} onClick={fetchLanguagesHandler}>{t('retry')}</Button>
             </Box>
           ) : (
             <Box overflowX="auto">
@@ -277,7 +276,7 @@ export const LanguagesTable = () => {
                           {language.flagUrl ? (
                             <Image 
                               src={language.flagUrl} 
-                              alt={`Bandera de ${language.name}`} 
+                              alt={t('flag_preview')} 
                               maxH="30px"
                               fallback={<Box w="30px" h="20px" bg="gray.200" />}
                             />
@@ -296,16 +295,16 @@ export const LanguagesTable = () => {
                               mr={2}
                             />
                             <Badge colorScheme={language.isActive ? 'green' : 'red'}>
-                              {language.isActive ? 'Activo' : 'Inactivo'}
+                              {language.isActive ? t('active') : t('inactive')}
                             </Badge>
                           </Flex>
                         </Td>
-                        <Td>{new Date(language.audit.createdAt).toLocaleDateString()}</Td>
+                        <Td>{language.audit && language.audit.createdAt ? new Date(language.audit.createdAt).toLocaleDateString() : '-'}</Td>
                         <Td>
                           <Flex>
                             <IconButton
                               icon={<FiEdit />}
-                              aria-label="Editar lenguaje"
+                              aria-label={t('edit_language')}
                               colorScheme="blue"
                               variant="ghost"
                               onClick={() => handleEdit(language)}
@@ -313,7 +312,7 @@ export const LanguagesTable = () => {
                             />
                             <IconButton
                               icon={<FiTrash2 />}
-                              aria-label="Eliminar lenguaje"
+                              aria-label={t('delete_language')}
                               colorScheme="red"
                               variant="ghost"
                               onClick={() => openDeleteDialog(language)}

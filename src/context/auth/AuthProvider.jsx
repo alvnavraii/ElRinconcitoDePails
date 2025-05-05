@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
-import { login as loginService, fetchCurrentUser } from '../../services/authService';
+import { login as loginService } from '../../services/authService';
+import { getUserByEmail } from '../../services/usersService';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -31,12 +32,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // Usar el servicio para login
       const data = await loginService({ email, password });
       localStorage.setItem('token', data.token);
-
-      // Obtener datos del usuario autenticado
-      const userData = await fetchCurrentUser(data.token);
+      // Obtener datos completos del usuario usando el email
+      const userData = await getUserByEmail(data.token, email);
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);

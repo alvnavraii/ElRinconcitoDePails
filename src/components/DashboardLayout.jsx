@@ -129,7 +129,7 @@ const SidebarContent = ({ ...rest }) => {
           </Flex>
           {translationsOpen && (
             <VStack align="stretch" spacing={0} pl={8}>
-              <NavItem to="/dashboard/translations/categories">{t('categories')}</NavItem>
+              <NavItem to="/dashboard/translations/categoryTranslations">{t('category_translations_management')}</NavItem>
               {/* Aquí puedes añadir más entidades en el futuro */}
             </VStack>
           )}

@@ -12,7 +12,7 @@ import { UsersTable } from './components/dashboard/users/UsersTable';
 import { DashboardHome } from './components/dashboard/controlPanel/DashboardHome';
 import LanguagesTable from './components/dashboard/languages/LanguagesTable';
 import CategoryForm from './components/dashboard/categories/CategoryForm';
-import CategoryTranslations from './components/dashboard/translations/CategoryTranslations';
+import CategoryTranslationsTable from './components/dashboard/translations/categoryTranslations/CategoryTranslationsTable';
 import theme from './theme';
 import { CategoryProvider } from './context/categories/CategoryProvider';
 
@@ -50,7 +50,7 @@ function App() {
                           <Route path="edit/:id" element={<CategoryForm />} />
                         </Route>
                         <Route path="translations">
-                          <Route path="categories" element={<CategoryTranslations />} />
+                          <Route path="categoryTranslations" element={<CategoryTranslationsTable />} />
                         </Route>
                         <Route path="products" element={<div>Productos</div>} />
                         <Route path="brands" element={<div>Marcas</div>} />

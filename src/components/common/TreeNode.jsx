@@ -5,8 +5,8 @@ import { FaChevronRight, FaChevronDown, FaEdit, FaTrash } from 'react-icons/fa';
 const TreeNode = ({ node, selectedId, onSelect, expandedIds, onToggleNode, onEdit, onDelete, level = 0 }) => {
   console.log(`TreeNode ID: ${node.id}, Received selectedId: ${selectedId}, Type of node.id: ${typeof node.id}, Type of selectedId: ${typeof selectedId}`);
 
-  const isSelected = Number(selectedId) === Number(node.id);
-  const isExpanded = expandedIds.has(Number(node.id));
+  const isSelected = (typeof selectedId === 'number' || typeof selectedId === 'string') && selectedId === node.id;
+  const isExpanded = expandedIds instanceof Set && expandedIds.has(Number(node.id));
   const hasChildren = node.children && node.children.length > 0;
 
   console.log(`Node ${node.id} - isSelected: ${isSelected}`);
