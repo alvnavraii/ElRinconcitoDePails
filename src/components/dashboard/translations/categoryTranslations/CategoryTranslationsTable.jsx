@@ -37,7 +37,6 @@ import CategoryTranslationModal from './CategoryTranslationModal';
 import { fetchCategoryTranslations, createCategoryTranslation, updateCategoryTranslation, deleteCategoryTranslation } from '../../../../services/categoryTranslationsService';
 import { fetchLanguages } from '../../../../services/languagesService';
 import { useCategories } from '../../../../hooks/useCategories';
-import Tree from '../../../common/Tree';
 
 const CategoryTranslationsTable = () => {
   const [translations, setTranslations] = useState([]);
@@ -55,8 +54,6 @@ const CategoryTranslationsTable = () => {
   const { t } = useTranslation();
 
   const { categories, fetchCategories } = useCategories();
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const [expandedIds, setExpandedIds] = useState(new Set());
   const [languages, setLanguages] = useState([]);
 
   const fetchLanguagesHandler = useCallback(async () => {
@@ -70,12 +67,11 @@ const CategoryTranslationsTable = () => {
   }, []);
 
   const fetchTranslationsHandler = useCallback(async () => {
-    if (!selectedCategoryId) return;
     setIsLoading(true);
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const data = await fetchCategoryTranslations(token, selectedCategoryId);
+      const data = await fetchCategoryTranslations(token);
       setTranslations(data);
     } catch (err) {
       setError(err.message);
@@ -90,17 +86,15 @@ const CategoryTranslationsTable = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, t, selectedCategoryId]);
+  }, [toast, t]);
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
   useEffect(() => {
-    if (selectedCategoryId) {
-      fetchTranslationsHandler();
-    }
-  }, [selectedCategoryId, fetchTranslationsHandler]);
+    fetchTranslationsHandler();
+  }, [fetchTranslationsHandler]);
 
   useEffect(() => {
     fetchLanguagesHandler();
@@ -232,7 +226,6 @@ const CategoryTranslationsTable = () => {
                 mr={2}
                 onClick={fetchTranslationsHandler}
                 isLoading={isLoading}
-                isDisabled={!selectedCategoryId}
               >
                 {t('refresh')}
               </Button>
@@ -240,28 +233,11 @@ const CategoryTranslationsTable = () => {
                 leftIcon={<FiPlus />}
                 colorScheme="blue"
                 onClick={handleCreate}
-                isDisabled={!selectedCategoryId}
               >
                 {t('new_category_translation')}
               </Button>
             </Flex>
           </Flex>
-
-          <FormControl mb={6} maxW="400px">
-            <FormLabel>{t('category')}</FormLabel>
-            <Tree
-              categories={categories}
-              selectedId={selectedCategoryId}
-              onSelect={setSelectedCategoryId}
-              expandedIds={expandedIds}
-              onToggleNode={nodeId => setExpandedIds(prev => {
-                const newSet = new Set(prev);
-                if (newSet.has(nodeId)) newSet.delete(nodeId);
-                else newSet.add(nodeId);
-                return newSet;
-              })}
-            />
-          </FormControl>
 
           <InputGroup mb={6}>
             <InputLeftElement pointerEvents="none">
@@ -297,7 +273,7 @@ const CategoryTranslationsTable = () => {
                 <Tbody>
                   {filteredTranslations.length > 0 ? (
                     filteredTranslations.map((tr) => (
-                      <Tr key={`${tr.language.code}-${selectedCategoryId}`}>
+                      <Tr key={`${tr.language.code}-${tr.id}`}>
                         <Td>{tr.language.code}</Td>
                         <Td>{tr.name}</Td>
                         <Td>{tr.description || '-'}</Td>

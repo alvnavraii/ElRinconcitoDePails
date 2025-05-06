@@ -3,7 +3,11 @@
 const API_URL = 'http://localhost:8080/api/v1/categories/translations';
 
 export async function fetchCategoryTranslations(token, categoryId) {
-  const response = await fetch(`${API_URL}/category/${categoryId}`, {
+  let url = API_URL;
+  if (categoryId) {
+    url = `${API_URL}/category/${categoryId}`;
+  }
+  const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/json'
